@@ -1,0 +1,16 @@
+<% include partials/header %>
+
+<div class="container login ">
+<form action="/login" method="post">
+  <div class="form-group">
+    <label>Email Adresiniz</label>
+    <input type="text" class="form-control" name="email"  placeholder="E-mail">
+  </div>
+  <div class="form-group">
+    <label >Şifreniz</label>
+    <input type="password" class="form-control" name="password" placeholder="Şifre">
+  </div>
+  <button type="submit" class="btn btn-primary">Gönder</button>
+</form>
+</div>
+<% include partials/footer %>

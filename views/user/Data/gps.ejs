@@ -1,0 +1,48 @@
+<% include ../../partials/header %>
+
+
+<h3>My Google Maps Demo</h3>
+<div id="map_canvas" class="map_canvas"></div>
+<!--<div id="map"></div>-->
+<script>
+  function initialize(){
+    
+      var data = <%- JSON.stringify(gps)%> 
+      var polylineCoordinates = [];
+      data.forEach(function(row) {
+        // console.log(row);
+        polylineCoordinates.push(new google.maps.LatLng(row.lat,row.lon));
+      });
+    
+       var center= new google.maps.LatLng(data[data.length/2].lat,data[data.length/2].lon);
+       var myOptions = {
+                zoom: 18,
+                center: center,
+                mapTypeControl: true,
+                mapTypeControlOptions: {style: google.maps.MapTypeControlStyle.DROPDOWN_MENU},
+                navigationControl: true,
+                mapTypeId: google.maps.MapTypeId.HYBRID
+       }     
+      var map = new google.maps.Map(document.getElementById("map_canvas"), myOptions);
+   
+     
+     
+      var polyline = new google.maps.Polyline({
+          path: polylineCoordinates,
+          strokeColor: '#FF0000',
+          strokeOpacity: 1.0,
+          strokeWeight: 2,
+          editable: true
+      });
+
+      polyline.setMap(map);    
+
+}
+
+    
+// google.maps.event.addDomListener(window, 'load', initialize);
+</script>
+<script defer
+src="https://maps.googleapis.com/maps/api/js?key=API_KEY=initialize">
+</script>
+<% include ../../partials/footer %>

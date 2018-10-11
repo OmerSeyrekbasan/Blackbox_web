@@ -1,0 +1,35 @@
+<% include ../partials/header %>
+
+<div  class="container" style="width: 44%;" >
+    <table   class="table table-hover" >
+        <thead >
+        <tr >
+            <th>Adı</th><th>Soyadı</th><th></th> 
+        </tr>
+        </thead>
+        <tbody  >
+            <% list.forEach(function(r) { %>
+                <tr>
+                    <th style="text-align:left;">
+                        <%= r.name %>
+                    </th>
+                    <th style="text-align:lfet;">
+                        <%= r.surname %>
+                    </th>
+                    <th style="text-align:center;">
+                    <a href="<%=r._id%>/acc_index" >    
+                        <button type="button" class="btn btn-default" data-toggle="collapse" data-target="#demo">Geçmişi Görüntüle</button>
+                    </a>
+                    <a href="<%=r._id%>/watch"> 
+                        <button type="button" class="btn btn-default" data-toggle="collapse" data-target="#demo">Canlı İzle</button>
+                    </a>
+                    </th>
+                </tr>
+            <% }); %>
+        </tbody>
+    </table>
+    
+</div>
+
+
+<% include ../partials/footer %>

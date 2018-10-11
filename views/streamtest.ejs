@@ -1,0 +1,236 @@
+<% include partials/header %>
+
+
+<h1>GYRO GYRO PLOT</h1>
+<div id="myGyro"></div>
+
+<h1>ACCELEROMETER PLOT</h1>
+<div id="myDiv"></div>
+
+<!--<h1>Accelerometer</h1>-->
+<!--<div id="graph"></div>-->
+
+<h1>GYRO PLOT</h1>
+<div id="myDiv2"></div>
+
+<script>
+  
+
+</script>
+
+
+<script>
+var data;
+var gyro;
+var accelerometer;
+var gyro_count = 0;
+var accelerometer_count = 0;
+  console.log("Hey!");
+    var time = [];
+    var listx = [];
+    var listy = [];
+    var listz =[];
+    var user_id = "5aa9598c09fb070acfe3d463"; 
+    var connection = new WebSocket('wss://exercise-omerseyrekbasan.c9users.io/ws/' + user_id + '/getAcc');
+    var count = 0;
+    connection.onopen = function () {
+    // connection is opened and ready to use
+    connection.send("Hello");
+    };
+    
+    connection.onerror = function (error) {
+    // an error occurred when sending/receiving data
+    console.log(gyro_count);
+    console.log(accelerometer_count);
+    
+    };
+    
+    connection.onmessage = function (msg) {
+    
+    // console.log(msg.data.val);
+    data = JSON.parse(msg.data);
+    // console.log(msg
+    // console.log(data);
+    // console.log(data);
+    console.log(data.type);
+    if (data.type === 1) {
+      gyro_count++;
+      gyro = data;
+    } else {
+      accelerometer = data.accelerometer;
+      console.log(accelerometer);
+      accelerometer_count++;
+    }
+    // connection.send("yolla");
+    count++;
+    
+    }
+// GYRO GYRO TEST GRAPH
+
+function rand() {
+  return Math.random();
+}
+//Accelerometer Graph
+Plotly.plot('myGyro', [{
+  y: [1,2,3].map(rand),
+  mode: 'lines',
+  line: {color: '#80CAF6'}
+}, {
+  y: [1,2,3].map(rand),
+  mode: 'lines',
+  line: {color: '#DF56F1'}}, {
+  y: [1,2,3].map(rand),
+  mode: 'lines',
+  line: {color: '#9F0641'}
+  
+}]);
+
+var cnt = 0;
+
+var interval = setInterval(function() {
+
+  Plotly.extendTraces('myGyro', {
+    y: [[gyro.gyro.xAxis], [gyro.gyro.yAxis], [gyro.gyro.zAxis]]
+  }, [0, 1, 2])
+
+  if(cnt === 100) clearInterval(interval);
+}, 30);
+
+
+
+
+function rand() {
+  return Math.random();
+}
+//Accelerometer Graph
+Plotly.plot('myDiv', [{
+  y: [1,2,3].map(rand),
+  mode: 'lines',
+  line: {color: '#80CAF6'}
+}, {
+  y: [1,2,3].map(rand),
+  mode: 'lines',
+  line: {color: '#DF56F1'}}, {
+  y: [1,2,3].map(rand),
+  mode: 'lines',
+  line: {color: '#9F0641'}
+  
+}]);
+
+var cnt = 0;
+
+var interval = setInterval(function() {
+
+  Plotly.extendTraces('myDiv', {
+    y: [[accelerometer.xAxis], [accelerometer.yAxis], [accelerometer.zAxis]]
+  }, [0, 1, 2])
+
+  if(cnt === 100) clearInterval(interval);
+}, 30);
+
+
+
+
+//GYRO Accelerometer Graph
+Plotly.plot('myDiv2', [{
+  y: [1,2,3].map(rand),
+  mode: 'lines',
+  line: {color: '#80CAF6'}
+}, {
+  y: [1,2,3].map(rand),
+  mode: 'lines',
+  line: {color: '#DF56F1'}}, {
+  y: [1,2,3].map(rand),
+  mode: 'lines',
+  line: {color: '#9F0641'}
+  
+}]);
+
+var cnt = 0;
+
+var interval = setInterval(function() {
+
+  Plotly.extendTraces('myDiv2', {
+    y: [[gyro.accelerometer.xAxis], [gyro.accelerometer.yAxis], [gyro.accelerometer.zAxis]]
+  }, [0, 1, 2])
+
+  if(cnt === 100) clearInterval(interval);
+}, 30);
+
+
+
+//steraming
+var time = new Date();
+
+var data = [{
+  x: [time],
+  y: [0],
+  mode: 'lines',
+  line: {color: '#80CAF6'}
+    
+}, {
+      x: [time],
+      y: [0],
+      mode: 'lines',
+      line: {color: '#D50AE6'}
+    
+},
+  {
+      x: [time],
+      y: [1],
+      mode: 'lines',
+      line: {color: '#05EA16'}
+      
+  }]
+
+Plotly.plot('graph', data);
+
+var cnt = 0;
+
+var interval = setInterval(function() {
+
+  var time = new Date();
+
+  var updatex = {
+  x:  [[time]],
+  y: [[gyro.xAxis]]
+  }
+  
+  var updatey = {
+  x:  [[time]],
+  y: [[gyro.yAxis]]
+  }
+  
+  var updatez = {
+  x:  [[time]],
+  y: [[gyro.zAxis]]
+  }
+  
+
+  var olderTime = time.setMinutes(time.getMinutes() - 1);
+  var futureTime = time.setMinutes(time.getMinutes() + 1);
+
+  var minuteView = {
+        xaxis: {
+          type: 'date',
+          range: [olderTime,futureTime]
+        }
+      };
+
+  Plotly.relayout('graph', minuteView);
+  Plotly.extendTraces('graph', updatex, [0]);
+  Plotly.extendTraces('graph', updatey, [1]);
+  Plotly.extendTraces('graph', updatez, [2]);
+
+  if(cnt === 100) clearInterval(interval);
+}, 10);
+
+
+
+
+
+</script>
+
+
+
+<% include partials/footer %>
