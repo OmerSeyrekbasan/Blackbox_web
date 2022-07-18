@@ -1,0 +1,19 @@
+<% include ../partials/header %>
+
+
+
+
+
+
+
+<div class="container">
+  <div  style="text-align:center;" class="jumbotron">
+    <h1 style ="text-transform: capitalize">Hoş Geldiniz, <%= currentUser.name%> <%=currentUser.surname  %>!</h1>      
+    <p> Hemen Sürücülerinizi Görüntüleyin! </p>
+    <a href="/drivers"><button style="color:black;background-color:white;" class="btn-lg"> Sürücüleri Göster</button></a>
+  </div>
+   
+</div>
+
+
+<% include ../partials/footer %>

@@ -1,0 +1,36 @@
+<% include ../partials/header %>
+
+
+
+<div class="container" style="width: 44%;">
+    <table class="table table-hover" >
+        <thead>
+        <tr>
+            <th>Adı</th><th>Soyadı</th><th>Başlama Tarihi</th>
+        </tr>
+        </thead>
+        <tbody>
+            <% list.forEach(function(r) { %>
+                <tr>
+                    <th>
+                        <%= r.name %>
+                    </th>
+                    <th>
+                        <%= r.surname %>
+                    </th>
+                    <th>
+                        <%= r.baslamaTarih %>
+                    </th>
+                    <th>
+                        <button type="button" class="btn btn-info" data-toggle="collapse" data-target="#demo">Detayları Göster</button>
+                        
+                    </th>
+                </tr>
+            <% }); %>
+        </tbody>
+    </table>
+    
+</div>
+
+
+<% include ../partials/footer %>

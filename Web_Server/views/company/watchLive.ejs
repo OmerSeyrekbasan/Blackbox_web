@@ -1,0 +1,541 @@
+<% include ../partials/header %>
+
+  <div style="  text-align: center; font-size: 16px">
+<label class="checkbox-inline"><input id="gyro" type="checkbox" value="" checked >Jiroskop</label>
+<label class="checkbox-inline"><input id="acc" type="checkbox" value="" checked >İvmeölçer</label>
+<label class="checkbox-inline"><input id="gps" type="checkbox" value="" checked>GPS</label>
+<label class="checkbox-inline"><input id="obd" type="checkbox" value="" checked>OBD</label>
+<label class="checkbox-inline"><input id="android" type="checkbox" value="" checked>Android</label>
+</div>
+<div class="container">
+
+<div style="margin-top: 5%;" id="myGyro"></div>
+
+<div style="margin-top: 5%;" id="myDiv"></div>
+
+<div style="margin-top: 5%;" id="myAndroid"></div>
+
+<div style="margin-top: 5%;" id="myOBD"></div>
+
+
+
+<div style="margin-top: 5%;"  id="map_canvas" class="map_canvas"></div>
+
+</div>
+
+
+
+<script>
+
+
+$( "#gyro" ).change(function() {
+  $( "#myGyro" ).toggle();
+});
+
+$( "#acc" ).change(function() {
+  $( "#myDiv" ).toggle();
+});
+
+$( "#android" ).change(function() {
+  $( "#myAndroid" ).toggle();
+});
+
+$( "#obd" ).change(function() {
+  $( "#myOBD" ).toggle();
+});
+
+
+$( "#gps" ).change(function() {
+  $( "#map_canvas" ).toggle();
+});
+
+
+
+</script>
+
+
+<script>
+var data;
+var gyro;
+var tel = {
+  x:1,
+  y:2,
+  z:3
+};
+var accelerometer;
+var obd;
+var watch = {
+  heartRate: 80
+};
+var gps;
+
+var gyro_count = 0;
+var accelerometer_count = 0;
+  console.log("Hey!");
+    var time = [];
+    var user = <%- JSON.stringify(user) %>
+    console.log(user.macAddress);
+    var connection = new WebSocket('ws://ec2-35-156-178-24.eu-central-1.compute.amazonaws.com/ws/' + user.macAddress + '/getAcc');
+    // var connection = new WebSocket('ws://localhost:3000/ws/' + user.macAddress + '/getAcc');
+    var count = 0;
+    connection.onopen = function () {
+    // connection is opened and ready to use
+    connection.send("Hello");
+    console.log("Connection Established!");
+    };
+    
+    connection.onerror = function (error) {
+    // an error occurred when sending/receiving data
+    console.log(gyro_count);
+    console.log(accelerometer_count);
+    
+    };
+    
+    connection.onmessage = function (msg) {
+    
+    // console.log(msg.data.val);
+    data = JSON.parse(msg.data);
+    // console.log(msg
+    // console.log(data);
+    // console.log(data);
+    switch(data.type) {
+      case 0:
+      gps = data;
+        break;
+      case 1:
+      gyro = data;
+      console.log(gyro);
+        break;
+      case 2:
+      accelerometer = data;
+      console.log(accelerometer);
+        break;
+      case 3:
+      obd = data;
+        break;
+      case 4:
+      tel = data;
+        break;
+      case 5:
+      watch: data;
+        break;
+    }
+
+    // if (data.type === 1) {
+    //   gyro_count++;
+    //   gyro = data;
+    // } else {
+    //   accelerometer = data.accelerometer;
+    //   console.log(accelerometer);
+    //   accelerometer_count++;
+    // }
+    // connection.send("yolla");
+    count++;
+    
+    }
+//TESTT
+
+function rand() {
+  return Math.random();
+}
+Plotly.plot('myGyro', [{
+  y: [1,2,3].map(rand),
+  mode: 'lines',
+  line: {color: '#80CAF6'},
+  name: 'X Ekseni'
+}, {
+  y: [1,2,3].map(rand),
+  mode: 'lines',
+  line: {color: '#DF56F1'},
+name: 'Y Ekseni'}, {
+  y: [1,2,3].map(rand),
+  mode: 'lines',
+  line: {color: '#9F0641'},
+  name: 'Z Ekseni'
+  
+}], {title:'Jiroskop Grafiği'});
+
+var cnt = 0;
+var count = 0;
+var gyrox = [];
+var gyroy = [];
+var gyroz = [];
+
+var interval = setInterval(function() {
+  gyrox.push(gyro.x);
+  gyroy.push(gyro.y);
+  gyroz.push(gyro.z);
+  count++;
+  if (count > 400) {
+    gyrox.shift();
+    gyroy.shift();
+    gyroz.shift();
+    console.log(gyrox.length);
+    count--;
+  } else {
+
+  }
+  count++;
+  Plotly.react('myGyro', [{
+  y: gyrox,
+  mode: 'lines',
+  line: {color: '#80CAF6'},
+  name: 'X Ekseni'
+}, {
+  y: gyroy,
+  mode: 'lines',
+  line: {color: '#DF56F1'},
+name: 'Y Ekseni'}, {
+  y: gyroz,
+  mode: 'lines',
+  line: {color: '#9F0641'},
+  name: 'Z Ekseni'
+  
+}], {title:'Jiroskop Grafiği'})
+
+  if(cnt === 100) clearInterval(interval);
+}, 30);
+
+
+//Accelerometer Graph
+function rand() {
+  return Math.random();
+}
+
+Plotly.plot('myDiv', [{
+  y: [1,2,3].map(rand),
+  mode: 'scatter',
+  line: {color: '#80CAF6'},
+  name: 'X Ekseni'
+}, {
+  y: [1,2,3].map(rand),
+  mode: 'lines',
+  line: {color: '#DF56F1'},
+name: 'Y Ekseni'}, {
+  y: [1,2,3].map(rand),
+  mode: 'lines',
+  line: {color: '#9F0641'},
+  name: 'Z Ekseni'
+  
+}], {title:'İvmeölçer Grafiği'});
+
+var cnt = 0;
+var count = 0;
+var accx = [];
+var accy = [];
+var accz = [];
+
+
+
+var interval = setInterval(function() {
+  accx.push(accelerometer.x);
+  accy.push(accelerometer.y);
+  accz.push(accelerometer.z);
+  count++;
+
+  if (count > 400) {
+    accx.shift();
+    accy.shift();
+    accz.shift();
+    count--;
+  } else {
+
+  }
+  count++;
+  Plotly.react('myDiv', [{
+  y: accx,
+  mode: 'lines',
+  line: {color: '#80CAF6'},
+  name: 'X Ekseni'
+}, {
+  y: accy,
+  mode: 'lines',
+  line: {color: '#DF56F1'},
+name: 'Y Ekseni'}, {
+  y: accz,
+  mode: 'lines',
+  line: {color: '#9F0641'},
+  name: 'Z Ekseni'
+  
+}], {title:'İvmeölçer Grafiği'})
+
+
+  if(cnt === 100) clearInterval(interval);
+}, 30);
+
+//Android Grafiği
+function rand() {
+  return Math.random();
+}
+Plotly.plot('myAndroid', [{
+  y: [1,2,3].map(rand),
+  mode: 'lines',
+  line: {color: '#80CAF6'},
+  name: 'X Ekseni'
+}, {
+  y: [1,2,3].map(rand),
+  mode: 'lines',
+  line: {color: '#DF56F1'},
+  name: 'Y Ekseni'}, {
+  y: [1,2,3].map(rand),
+  mode: 'lines',
+  line: {color: '#9F0641'},
+  name: 'Z Ekseni' 
+}, {
+  y: [1,2,3].map(rand),
+  mode: 'lines',
+  line: {color: '#9F0641'},
+  name: 'Kalp Atışı' 
+}
+], {title:'Android Grafiği'});
+
+var cnt = 0;
+var telx = [];
+var tely = [];
+var telz = [];
+var kalp = [];
+var count = 0;
+
+var interval = setInterval(function() {
+  telx.push(tel.x);
+  tely.push(tel.y);
+  telz.push(tel.z);
+  kalp.push(watch.heartRate);
+  
+  count++;
+  if (count > 400) {
+    telx.shift();
+    tely.shift();
+    telz.shift();
+    kalp.shift();
+    count--;
+  } 
+
+  var layout = {
+  // autosize: false,
+  title: 'Android Grafiği',
+  xaxis: {
+    title: ' Zaman ',
+    titlefont: {
+      family: 'Courier New, monospace',
+      size: 18,
+      color: 'black'
+    }
+  },
+  yaxis: {
+    title: 'Manyetometre',
+    titlefont: {
+      family: 'Courier New, monospace',
+      size: 18,
+      color: 'black'
+    }
+  },
+  yaxis2: {
+    title: 'Kalp Atış',
+    anchor: 'x',
+    overlaying: 'y',
+    side: 'right',
+  }
+};
+
+  Plotly.react('myAndroid', [{
+  y: telx,
+  mode: 'lines',
+  line: {color: '#80CAF6'},
+  name: 'X Ekseni'
+}, {
+  y: tely,
+  mode: 'lines',
+  line: {color: '#DF56F1'},
+name: 'Y Ekseni'}, {
+  y: telz,
+  mode: 'lines',
+  line: {color: '#9F0641'},
+  name: 'Z Ekseni'
+},
+{
+  y: kalp,
+  mode: 'lines',
+  line: {color: '#9900F1'},
+  name: 'Kalp Atışı',
+  yaxis:'y2'
+}],layout);
+
+  if(cnt === 100) clearInterval(interval);
+}, 30);
+
+
+//OBD
+
+var speed = {
+  x: [0,1,2],
+  y: [0,1,2],
+  type: 'scatter',
+  name: "Hız",
+  
+};
+
+var rpm = {
+  x: [0,1,2],
+  y: [0,1,2],
+  type: 'scatter',
+  name: "Motor Devri",
+  yaxis: 'y2',
+};
+
+var data = [speed, rpm];
+
+var layout = {
+  // autosize: false,
+  title: 'OBD Grafiği',
+  xaxis: {
+    title: ' Zaman ',
+    titlefont: {
+      family: 'Courier New, monospace',
+      size: 18,
+      color: 'black'
+    }
+  },
+  yaxis: {
+    title: 'KM/H',
+    titlefont: {
+      family: 'Courier New, monospace',
+      size: 18,
+      color: 'black'
+    }
+  },
+  yaxis2: {
+    title: 'RPM',
+    anchor: 'x',
+    overlaying: 'y',
+    side: 'right',
+  }
+ 
+};
+
+
+Plotly.newPlot('myOBD', data, layout);
+
+var cnt = 0;
+var speed = [];
+var rpm = [];
+
+var count = 0;
+
+var interval = setInterval(function() {
+
+var layout = {
+  // autosize: false,
+  title: 'OBD Grafiği',
+  xaxis: {
+    title: ' Zaman ',
+    titlefont: {
+      family: 'Courier New, monospace',
+      size: 18,
+      color: 'black'
+    }
+  },
+  yaxis: {
+    title: 'KM/H',
+    titlefont: {
+      family: 'Courier New, monospace',
+      size: 18,
+      color: 'black'
+    }
+  },
+  yaxis2: {
+    title: 'RPM',
+    anchor: 'x',
+    overlaying: 'y',
+    side: 'right',
+  }
+ 
+};
+  speed.push(obd.speed);
+  rpm.push(obd.rpm);
+ 
+  count++;
+
+  if (count > 400) {
+    speed.shift();
+    rpm.shift();
+    console.log(speed);
+    count--;
+  } 
+Plotly.react('myOBD', [{
+  y: speed,
+  mode: 'lines',
+  line: {color: '#80CAF6'},
+  name: 'Hız',
+  yaxis:'y'
+}, {
+  y: rpm,
+  mode: 'lines',
+  yaxis:'y2',
+  line: {color: '#DF56F1'},
+name: 'Motor Devri'},
+], layout)
+ 
+  if(cnt === 100) clearInterval(interval);
+}, 30);
+
+
+
+</script>
+
+
+<script>
+  function initialize(){
+
+       var center= new google.maps.LatLng(0,0);
+       var myOptions = {
+                zoom: 18,
+                center: center,
+                mapTypeControl: true,
+                mapTypeControlOptions: {style: google.maps.MapTypeControlStyle.DROPDOWN_MENU},
+                navigationControl: true,
+                mapTypeId: google.maps.MapTypeId.HYBRID,
+                zoom: 17
+       }     
+      var map = new google.maps.Map(document.getElementById("map_canvas"), myOptions);
+   
+     
+     
+      var polyline = new google.maps.Polyline({
+          strokeColor: '#FF0000',
+          strokeOpacity: 1.0,
+          strokeWeight: 2,
+          editable: true
+      });
+
+      function mapAnimate(lat, lon){
+          google.maps.event.addListenerOnce(map, 'tilesloaded', function() {
+              window.setTimeout(function() {
+                  map.panTo(new google.maps.LatLng(lat, lon));
+              }, 50);
+          });
+      }
+      
+      polyline.setMap(map);  
+      path = polyline.getPath();
+      var interval = setInterval(function() {
+      path.push(new google.maps.LatLng(gps.lat,gps.lon));
+      mapAnimate(gps.lat, gps.lon);
+      if(cnt === 100) clearInterval(interval);
+    }, 30);
+
+}
+
+
+
+
+
+// google.maps.event.addDomListener(window, 'load', initialize);
+</script>
+<script defer
+src="https://maps.googleapis.com/maps/api/js?key=AIzaSyBERqVcVfIrC0vLj0rilRZW0xWwTJ0Pvb0&callback=initialize">
+</script>
+
+
+
+<% include ../partials/footer %>

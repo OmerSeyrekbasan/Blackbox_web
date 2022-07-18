@@ -1,0 +1,118 @@
+<% include ../partials/header %>
+
+
+<h1>ACCELEROMETER PLOT</h1>
+<div id="myDiv"></div>
+
+
+<h1>GYRO ACCELEROMETER PLOT</h1>
+<div id="myDiv2"></div>
+<script>
+
+var xAxis = {
+  x: <%=JSON.stringify(timea)%>,
+  y: <%=JSON.stringify(listx)%>,
+  type: 'scatter',
+  name: "X Axis"
+};
+
+var yAxis = {
+  x: <%=JSON.stringify(timea)%>,
+  y: <%=JSON.stringify(listy)%>,
+  type: 'scatter',
+  name: "Y Axis"
+};
+
+var zAxis = {
+  x: <%=JSON.stringify(timea)%>,
+  y: <%=JSON.stringify(listz)%>,
+  type: 'scatter',
+  name: "Z Axis"
+};
+
+var data = [xAxis, yAxis, zAxis];
+
+var layout = {
+  title: 'Accelerometer Plot',
+  xaxis: {
+    title: 'x Axis',
+    titlefont: {
+      family: 'Courier New, monospace',
+      size: 18,
+      color: '#7f7f7f'
+    }
+  },
+  yaxis: {
+    title: 'y Axis',
+    titlefont: {
+      family: 'Courier New, monospace',
+      size: 18,
+      color: '#7f7f7f'
+    }
+  }
+};
+
+
+
+Plotly.newPlot('myDiv', data);
+
+</script>
+
+
+<script>
+
+var xAxis = {
+  x: <%=JSON.stringify(timeg)%>,
+  y: <%=JSON.stringify(arrx)%>,
+  type: 'scatter',
+  name: "X Axis"
+};
+
+var yAxis = {
+  x: <%=JSON.stringify(timeg)%>,
+  y: <%=JSON.stringify(arry)%>,
+  type: 'scatter',
+  name: "Y Axis"
+};
+
+var zAxis = {
+  x: <%=JSON.stringify(timeg)%>,
+  y: <%=JSON.stringify(arrz)%>,
+  type: 'scatter',
+  name: "Z Axis"
+};
+
+var data = [xAxis, yAxis, zAxis];
+
+var layout = {
+  title: 'Gyro Plot',
+  xaxis: {
+    title: 'x Axis',
+    titlefont: {
+      family: 'Courier New, monospace',
+      size: 18,
+      color: '#7f7f7f'
+    }
+  },
+  yaxis: {
+    title: 'y Axis',
+    titlefont: {
+      family: 'Courier New, monospace',
+      size: 18,
+      color: '#7f7f7f'
+    }
+  }
+};
+
+
+Plotly.newPlot('myDiv2', data);
+
+</script>
+
+
+
+
+
+
+
+<% include ../partials/footer %>
